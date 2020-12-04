@@ -1,0 +1,68 @@
+#!/data/data/com.termux/files/usr/bin/zsh
+#
+# This is a termux-url-opener script to do diffrent tasks on my Android phone 
+#
+#
+#
+# How to use this script
+#############################
+# Create the bin directory
+# ➜ ~ mkdir bin
+# ➜ ~ cd bin
+# Create the script (copy & paste) I use neovim. Use your prefered editor
+# ➜ nvim termux-url-opener
+# 
+# Make it executable
+# ➜ chmod +x termux-url-opener
+# 
+# Install zsh wget and ffmpeg
+# ➜ pkg install zsh wget ffmpeg python
+# https://wiki.termux.com/wiki/Shells
+#
+# Install youtube_dl and scdl with pip
+# ➜ pip install youtube_dl
+# ➜ pip install scdl mutagen
+#
+# run the following command to enable the termux storage features
+# ➜ termux-setup-storage
+# https://wiki.termux.com/wiki/Termux-setup-storage
+
+url=$1
+echo "What should I do with $url ?"
+echo "1. Download youtube video to movies-folder"
+echo "2. Download youtube video to mp3"
+echo "3. Streaming youtube(without video) using mpv"
+echo "4. Wget file to download-folder" 
+echo "0. Nothing"
+echo ""
+echo -n "Pilih pilihanmu: " 
+read CHOICE
+case $CHOICE in
+    1)
+	    u=$( youtube-dl -F $url | grep -ic "720p60" )
+	    if [ $u -eq 2 ]
+	    then
+		    bash ~/bin/y60.sh $url
+	    else
+		    bash ~/bin/y30.sh $url
+	    fi
+	;;
+    2)
+	echo "Artist"
+	read artist
+	echo "Title"
+	read title
+	youtube-dl -f "bestaudio[ext=m4a]" --audio-format mp3 --output "/storage/emulated/0/Music/$artist-$title.%(ext)s" $url
+	mid3v2 -a $artist -t $title /storage/emulated/0/Music/$artist-$title.mp3
+	;;
+    3)
+	bash ~/bin/loli.sh $url
+	;;
+    4)
+        cd /storage/emulated/0/Download
+	aria2c -x 8 -s 8 -c -k 1MB $url
+	;;
+    0)
+        echo "bye"
+	;; 
+esac
